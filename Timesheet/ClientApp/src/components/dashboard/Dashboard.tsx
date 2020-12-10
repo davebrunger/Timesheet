@@ -1,61 +1,54 @@
 import * as React from 'react';
-import { Button, Form, Table } from 'reactstrap';
-import { InlineFormInput } from '../forms/InlineFormInput';
+import { Table } from 'reactstrap';
+import { format } from 'date-fns';
+import { getWithDatesArray, post } from '../../utilities/Fetch';
+import { convertFromJson, WorkLog } from '../../models/WorkLogs';
+import { useAsyncEffect } from '../../utilities/AsyncEffect';
+import { AddWorkLogInlineForm } from './AddWorkLogInlineForm';
+import { Stringified } from '../../utilities/Strings';
+import { parseDate } from '../../utilities/Dates';
 
 export function Dashboard(): JSX.Element {
 
-  const initialFormState = {
-    userId: "",
-    taskId: "",
-    date: "",
-    hours: ""
-  }
-
-  const [workLogs, setWorkLogs] = React.useState<any[] | undefined>(undefined);
-  const [formState, setFormState] = React.useState(initialFormState);
+  const [workLog, setWorkLog] = React.useState<Partial<Stringified<WorkLog>>>({});
+  const [workLogs, setWorkLogs] = React.useState<WorkLog[] | undefined>(undefined);
   const [posting, setPosting] = React.useState(false);
 
-  const fetchData = async () => {
-    const response = await fetch("api/worklogs")
-    const body = await response.json();
-    setWorkLogs(body);
-  };
+  useAsyncEffect(async () => {
+    setWorkLogs(await getWithDatesArray("workLogs", convertFromJson));
+  }, []);
 
-  const post = async () => {
+  useAsyncEffect(async () => {
     if (!posting) {
       return;
     }
 
-    const response = await fetch("api/worklogs", {
-      method: "POST",
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        user: { id: formState.userId },
-        task: { id: formState.taskId },
-        date: formState.date || undefined,
-        hours: formState.hours
-      })
-    });
-
-    if (response.ok) {
-      setFormState(initialFormState);
-      await fetchData();
+    if (await post("worklogs", { ...workLog, date: parseDate(workLog.date) })) {
+      setWorkLog({
+        user: workLog.user,
+        task: workLog.task
+      });
     }
     else {
-      alert(await response.text());
+      alert("oops");
+      setPosting(false);
     }
+  }, [posting]);
 
+  useAsyncEffect(async () => {
+    if (!posting) {
+      return;
+    }
+    setWorkLogs(await getWithDatesArray("workLogs", convertFromJson));
+  }, [workLog]);
+
+  React.useEffect(() => {
+    if (!posting) {
+      return;
+    }
     setPosting(false);
-  };
-
-  React.useEffect(() => { fetchData(); }, []);
-  React.useEffect(() => { 
-    post();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, [posting]);
+  }, [workLogs])
 
   const renderTableRows = () => {
     if (!workLogs) {
@@ -78,25 +71,15 @@ export function Dashboard(): JSX.Element {
         <td>{wl.task.project.name}</td>
         <td>{wl.task.name}</td>
         <td>{wl.user.name}</td>
-        <td>{wl.date}</td>
+        <td>{format(wl.date, "dd/MM/yyyy")}</td>
         <td>{wl.hours}</td>
       </tr>
     ))
   };
 
-  const changeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormState({ ...formState, [e.target.name]: e.target.value })
-  }
-
   return (
     <>
-      <Form inline>
-        <InlineFormInput id="userId" name="userId" label="User ID" value={formState.userId} onChange={changeHandler} disabled={posting} />
-        <InlineFormInput id="taskId" name="taskId" label="Task ID" value={formState.taskId} onChange={changeHandler} disabled={posting} />
-        <InlineFormInput id="date" name="date" label="date" value={formState.date} onChange={changeHandler} disabled={posting} />
-        <InlineFormInput id="hours" name="hours" label="hours" value={formState.hours} onChange={changeHandler} disabled={posting} />
-        <Button size="sm" disabled={posting} onClick={() => setPosting(true)}>Add</Button>
-      </Form>
+      <AddWorkLogInlineForm disabled={posting || !workLogs} post={() => setPosting(true)} setWorkLog={setWorkLog} workLog={workLog} />
       <Table borderless striped size="sm">
         <thead>
           <tr>

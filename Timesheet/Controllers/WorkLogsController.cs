@@ -65,16 +65,6 @@ namespace Timesheet.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (request.Date.TimeOfDay.TotalMilliseconds != 0)
-            {
-                ModelState.AddModelError("Date", "Date must not have a time component");
-            }
-
-            if (request.Hours <= 0)
-            {
-                ModelState.AddModelError("Hours", "Hours must be greater than zero");
-            }
-
             var task = await timesheetDataContext.Tasks.AsQueryable()
                 .SingleOrDefaultAsync(t => t.Id == request.Task.Id, cancellationToken)
                 .ConfigureAwait(false);
@@ -103,8 +93,8 @@ namespace Timesheet.Controllers
             }
 
             timesheetDataContext.WorkLogs.Add(new WorkLog {
-                Date = request.Date,
-                Hours = request.Hours,
+                Date = request.Date!.Value,
+                Hours = request.Hours!.Value,
                 Task = task!,
                 User = user!
             });
