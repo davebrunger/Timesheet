@@ -32,7 +32,9 @@ export function InlineFormSelect<T extends Option>(props: Props<T>): JSX.Element
     return (
         <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
             <Label for={props.id} className="mr-sm-2">{props.label}</Label>
-            <Input type="select" id={props.id} bsSize="sm" placeholder={props.label} value={props.valueId} onChange={change} disabled={props.disabled}>
+            <Input 
+                type="select" id={props.id} name={props.id} bsSize="sm" placeholder={props.label} 
+                value={props.valueId} onChange={change} disabled={props.disabled}>
                 {options}
             </Input>
         </FormGroup>

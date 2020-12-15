@@ -4,9 +4,9 @@ namespace Timesheet.Data.Models
 {
     public class User
     {
-        public static int NameMaxLength = 200;
+        public const int NameMaxLength = 200;
 
-        public static int LocationMaxLength = 100;
+        public const int LocationMaxLength = 100;
 
         public long Id { get; set; }
 

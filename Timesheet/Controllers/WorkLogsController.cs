@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Timesheet.Data;
 using Timesheet.Data.Models;
-using Timesheet.Data.SqlServer;
 using Timesheet.Models;
 
 namespace Timesheet.Controllers
@@ -14,20 +14,20 @@ namespace Timesheet.Controllers
     [Route("api/[controller]")]
     public class WorkLogsController : ControllerBase
     {
-        private readonly TimesheetDataContext timesheetDataContext;
+        private readonly ITimesheetRepository timesheetRepository;
 
         private readonly ILogger<WorkLogsController> logger;
 
-        public WorkLogsController(TimesheetDataContext timesheetDataContext, ILogger<WorkLogsController> logger)
+        public WorkLogsController(ITimesheetRepository timesheetRepository, ILogger<WorkLogsController> logger)
         {
-            this.timesheetDataContext = timesheetDataContext;
+            this.timesheetRepository = timesheetRepository;
             this.logger = logger;
         }
 
         [HttpGet]
         public async Task<ActionResult> GetAsync(CancellationToken cancellationToken)
         {
-            var data = await timesheetDataContext.WorkLogs
+            var data = await timesheetRepository.WorkLogs
                 .Select(wl => new
                 {
                     wl.Id,
@@ -65,26 +65,29 @@ namespace Timesheet.Controllers
                 return BadRequest(ModelState);
             }
 
-            var task = await timesheetDataContext.Tasks.AsQueryable()
+            var task = await timesheetRepository.Tasks
                 .SingleOrDefaultAsync(t => t.Id == request.Task.Id, cancellationToken)
                 .ConfigureAwait(false);
 
             if (task == null)
             {
-                ModelState.AddModelError("Task.Id", $"Cannot find task with ID: {request.Task.Id}");
+                ModelState.AddModelError($"{nameof(CreateUpdateWorkLogRequest.Task)}.{nameof(CreateUpdateWorkLogRequest.Task.Id)}", 
+                    $"Cannot find task with ID: {request.Task.Id}");
             }
             else if (task.TaskStateId != TaskStateId.Open)
             {
-                ModelState.AddModelError("Task.Id", $"Can only add work logs to open tasks");
+                ModelState.AddModelError($"{nameof(CreateUpdateWorkLogRequest.Task)}.{nameof(CreateUpdateWorkLogRequest.Task.Id)}",
+                    $"Can only add work logs to open tasks");
             }
 
-            var user = await timesheetDataContext.Users.AsQueryable()
+            var user = await timesheetRepository.Users
                 .SingleOrDefaultAsync(u => u.Id == request.User.Id, cancellationToken)
                 .ConfigureAwait(false);
 
             if (user == null)
             {
-                ModelState.AddModelError("User.Id", $"Cannot find user with ID: {request.User.Id}");
+                ModelState.AddModelError($"{nameof(CreateUpdateWorkLogRequest.User)}.{nameof(CreateUpdateWorkLogRequest.User.Id)}",
+                    $"Cannot find user with ID: {request.User.Id}");
             }
 
             if (!ModelState.IsValid)
@@ -92,14 +95,14 @@ namespace Timesheet.Controllers
                 return BadRequest(ModelState);
             }
 
-            timesheetDataContext.WorkLogs.Add(new WorkLog {
+            timesheetRepository.WorkLogs.Add(new WorkLog {
                 Date = request.Date!.Value,
                 Hours = request.Hours!.Value,
                 Task = task!,
                 User = user!
             });
 
-            await timesheetDataContext.SaveChangesAsync(cancellationToken)
+            await timesheetRepository.SaveChangesAsync(cancellationToken)
                 .ConfigureAwait(false);
 
             return Ok();

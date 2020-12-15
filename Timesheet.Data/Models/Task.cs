@@ -4,7 +4,7 @@ namespace Timesheet.Data.Models
 {
     public class Task
     {
-        public static int NameMaxLength = 200;
+        public const int NameMaxLength = 200;
 
         public long Id { get; set; }
 

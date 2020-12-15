@@ -2,6 +2,9 @@ import { parseISO } from "date-fns";
 
 export function parseDate(dateStr : string | undefined) : Date | undefined
 {
+  if (!dateStr) {
+    return undefined;
+  }
   return parseISO(`${dateStr}T00:00:00Z`);
 }
 

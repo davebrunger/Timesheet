@@ -8,6 +8,8 @@ namespace Timesheet.Data.SqlServer.Configuration
     {
         public void Configure(EntityTypeBuilder<Project> builder)
         {
+            builder.HasIndex(u => u.Name).IsUnique();
+
             builder.Property(p => p.Name).HasMaxLength(Project.NameMaxLength);
 
             builder.HasMany(p => p.Tasks)

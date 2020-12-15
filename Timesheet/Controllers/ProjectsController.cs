@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Timesheet.Data.SqlServer;
+using Timesheet.Data;
 
 namespace Timesheet.Controllers
 {
@@ -12,20 +12,20 @@ namespace Timesheet.Controllers
     [Route("api/[controller]")]
     public class ProjectsController : ControllerBase
     {
-        private readonly TimesheetDataContext timesheetDataContext;
+        private readonly ITimesheetRepository timesheetRepository;
 
         private readonly ILogger<ProjectsController> logger;
 
-        public ProjectsController(TimesheetDataContext timesheetDataContext, ILogger<ProjectsController> logger)
+        public ProjectsController(ITimesheetRepository timesheetRepository, ILogger<ProjectsController> logger)
         {
-            this.timesheetDataContext = timesheetDataContext;
+            this.timesheetRepository = timesheetRepository;
             this.logger = logger;
         }
 
         [HttpGet]
         public async Task<ActionResult> GetAsync(CancellationToken cancellationToken)
         {
-            var data = await timesheetDataContext.Projects
+            var data = await timesheetRepository.Projects
                 .Select(p => new {
                     p.Id,
                     p.Name

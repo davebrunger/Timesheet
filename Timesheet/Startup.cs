@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Timesheet.Data;
 using Timesheet.Data.SqlServer;
 
 namespace Timesheet
@@ -26,6 +27,8 @@ namespace Timesheet
                     x.MigrationsAssembly("Timesheet.Data.SqlServer")));
 
             services.AddControllersWithViews();
+
+            services.AddScoped<ITimesheetRepository, TimesheetRepository>();
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>

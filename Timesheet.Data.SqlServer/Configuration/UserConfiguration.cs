@@ -8,6 +8,8 @@ namespace Timesheet.Data.SqlServer.Configuration
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
+            builder.HasIndex(u => u.Name).IsUnique();
+
             builder.Property(u => u.Name).HasMaxLength(User.NameMaxLength);
             builder.Property(u => u.Location).HasMaxLength(User.LocationMaxLength);
 
