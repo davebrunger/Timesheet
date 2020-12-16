@@ -4,13 +4,14 @@ import { Request } from "../../models/Request";
 import { Async } from "./Async";
 import { TDataItem } from "./DataTable";
 
-interface Props<T extends TDataItem> {
+export interface Props<T extends TDataItem> {
     entityName: string
-    request: Request<T[]>;
+    dataRequest: Request<T[]>;
     columns: {
         label: string,
         getValue: (row: T) => React.ReactNode | undefined,
-        isRowHeader?: boolean
+        isRowHeader?: boolean,
+        isRightAligned?: boolean
     }[]
 }
 
@@ -28,9 +29,9 @@ export function RequestDataTable<T extends TDataItem>(props: Props<T>): JSX.Elem
             <>
                 {data.map(t => (
                     <tr key={t.id}>
-                        {props.columns.map(c => c.isRowHeader 
-                            ? <th key={c.label} scope="row">{c.getValue(t)}</th> 
-                            : <td key={c.label} >{c.getValue(t)}</td>)}
+                        {props.columns.map(c => c.isRowHeader
+                            ? <th key={c.label} scope="row" style={{ textAlign: c.isRightAligned ? "right" : undefined }} >{c.getValue(t)}</th>
+                            : <td key={c.label} style={{ textAlign: c.isRightAligned ? "right" : undefined }} >{c.getValue(t)}</td>)}
                     </tr>
                 ))}
             </>
@@ -41,12 +42,12 @@ export function RequestDataTable<T extends TDataItem>(props: Props<T>): JSX.Elem
         <Table borderless striped size="sm">
             <thead>
                 <tr>
-                    {props.columns.map(c => <th key={c.label}>{c.label}</th>)}
+                    {props.columns.map(c => <th key={c.label} scope="col" style={{ textAlign: c.isRightAligned ? "right" : undefined }} >{c.label}</th>)}
                 </tr>
             </thead>
             <tbody>
                 <Async
-                    request={props.request}
+                    request={props.dataRequest}
                     notRequested={() => (
                         <tr>
                             <td colSpan={props.columns.length}>Initializing...</td>

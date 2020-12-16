@@ -1,26 +1,19 @@
 import * as React from "react";
 import { Button, Form } from "reactstrap";
+import { InlineAddFormProps } from "../../models/InlineFormProps";
 import { Project, stringify } from "../../models/Project";
-import { isSuccess } from "../../models/Request";
 import { Task } from "../../models/Task";
-import { get } from "../../utilities/AsyncFetch";
-import { useRequestReducer } from "../../utilities/Reducers";
 import { Stringified } from "../../utilities/Strings";
-import { InlineAddFormProps } from "../common/DataTableWithInlineAddForm";
 import { InlineFormInput } from "../common/InlineFormInput";
 import { InlineFormSelect } from "../common/InlineFormSelect";
 
-export function AddTaskInlineForm(props: InlineAddFormProps<Task>): JSX.Element {
+interface Props extends InlineAddFormProps<Task> {
+    projects : Project[] | undefined;
+}
 
-    const [projectsRequest, dispatchProjectsRequest] = useRequestReducer<Project[]>(projects => {
-        if (!props.dataItem.project && projects.length > 0) {
-            props.setDataItem({ ...props.dataItem, project: stringify(projects[0]) });
-        }
-    });
+export function AddTaskInlineForm(props: Props): JSX.Element {
 
-    React.useEffect(() => { get("projects", dispatchProjectsRequest); }, [dispatchProjectsRequest]);
-
-    const isFormEnabled = () => !props.disabled && isSuccess(projectsRequest) && projectsRequest.data.length > 0;
+    const isFormEnabled = () => !props.disabled && props.projects && props.projects.length > 0;
 
     const nameChange = (value: string) => props.setDataItem({ ...props.dataItem, name: value });
     const projectChange = (project: Stringified<Project>) => props.setDataItem({ ...props.dataItem, project: project });
@@ -32,7 +25,7 @@ export function AddTaskInlineForm(props: InlineAddFormProps<Task>): JSX.Element 
                 onChange={nameChange} disabled={!isFormEnabled()} />
             <InlineFormSelect
                 id="projectId" label="Project" valueId={props.dataItem.project?.id}
-                onChange={projectChange} disabled={!isFormEnabled()} options={isSuccess(projectsRequest) ? projectsRequest.data.map(stringify) : undefined} />
+                onChange={projectChange} disabled={!isFormEnabled()} options={props.projects ? props.projects.map(stringify) : undefined} />
             <Button size="sm" disabled={!isFormEnabled()} onClick={props.post}>Add</Button>
         </Form>
     );

@@ -1,32 +1,30 @@
-import React, { Component } from 'react';
-import { Route } from 'react-router';
+import * as React from 'react';
+import { Route, Switch } from 'react-router';
 import { Layout } from './components/Layout';
 import { Dashboard } from './components/dashboard/Dashboard';
 import { Users } from './components/users/Users';
 import { Tasks } from './components/tasks/Tasks';
+import { MenuItem } from './models/menuItem';
 
 import './custom.css'
 
-export default class App extends Component {
-  static displayName = App.name;
+const menuItems: MenuItem[] = [
+  { label: "Dashboard", path: "/", component: Dashboard, exact: true },
+  { label: "Users", path: "/users", component: Users },
+  { label: "Tasks", path: "/tasks", component: Tasks }
+];
 
-  render() {
-    return (
-      <Layout>
-        <Route exact path='/' component={Dashboard} />
-        <Route path='/users' component={Users} />
-        <Route path='/tasks' component={Tasks} />
-      </Layout>
-    );
+export const AppContext = React.createContext({ menuItems: menuItems });
 
-    /*
-    return (
-      <Layout>
-        <Route exact path='/' component={Home} />
-        <Route path='/counter' component={Counter} />
-        <Route path='/fetch-data' component={FetchData} />
-      </Layout>
-    );
-    */
-  }
+export default function App(): JSX.Element {
+
+  const menuItems = React.useContext(AppContext).menuItems;
+
+  return (
+    <Layout>
+      <Switch>
+        {menuItems.map((m, i) => <Route key={i} exact={m.exact} path={m.path} component={m.component} />)}
+      </Switch>
+    </Layout>
+  );
 }

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Button, Form } from "reactstrap";
+import { InlineAddFormProps } from "../../models/InlineFormProps";
 import { User } from "../../models/User";
-import { InlineAddFormProps } from "../common/DataTableWithInlineAddForm";
 import { InlineFormInput } from "../common/InlineFormInput";
 
 export function AddUserInlineForm(props: InlineAddFormProps<User>): JSX.Element {
