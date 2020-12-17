@@ -21,6 +21,8 @@ namespace Timesheet.Data.SqlServer
 
         public ITable<WorkLog> WorkLogs => DbSetWrapper.New(context.WorkLogs);
 
+        public ITable<Activity> Activities => DbSetWrapper.New(context.Activities);
+
         public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             return context.SaveChangesAsync(cancellationToken);

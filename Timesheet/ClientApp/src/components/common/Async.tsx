@@ -1,7 +1,7 @@
 import { ERROR, NOT_REQUESTED, Request, REQUESTED, SUCCESS } from "../../models/Request";
 
 interface Props<T> {
-    request: Request<T>
+    request: Request<T>;
     notRequested?: () => JSX.Element | null;
     requested?: () => JSX.Element | null;
     success?: (data: T) => JSX.Element | null;

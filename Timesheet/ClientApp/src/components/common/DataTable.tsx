@@ -34,7 +34,7 @@ export function DataTable<T extends TDataItem>(props: Props<T>): JSX.Element {
         }
         return props.data.map(t => (
             <tr key={t.id}>
-                {props.columns.map(c => c.isRowHeader ? <th scope="row">{c.getValue(t)}</th> : <td>{c.getValue(t)}</td>)}
+                {props.columns.map(c => c.isRowHeader ? <th key={c.label} scope="row">{c.getValue(t)}</th> : <td key={c.label} >{c.getValue(t)}</td>)}
             </tr>
         ))
     };
@@ -43,7 +43,7 @@ export function DataTable<T extends TDataItem>(props: Props<T>): JSX.Element {
         <Table borderless striped size="sm">
             <thead>
                 <tr>
-                    {props.columns.map(c => <td key={c.label}>{c.label}</td>)}
+                    {props.columns.map(c => <th key={c.label}>{c.label}</th>)}
                 </tr>
             </thead>
             <tbody>

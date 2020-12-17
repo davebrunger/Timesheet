@@ -1,11 +1,16 @@
 import { Request, requested, success, requestError } from "../models/Request";
+import { DatesAsStrings } from "./Dates";
 
-export async function get<TData>(apiPath: string, dispatch: (action: Request<TData>) => void) {
+async function performGet<TData, TJson>(
+    apiPath: string,
+    convert: (json: TJson) => TData,
+    dispatch: (action: Request<TData>) => void
+) {
     dispatch(requested());
     try {
         const response = await fetch(`api/${apiPath}`);
         if (response.ok) {
-            dispatch(success(await response.json()));
+            dispatch(success(convert(await response.json())));
         } else {
             dispatch(requestError(response.status));
         }
@@ -20,6 +25,18 @@ export async function get<TData>(apiPath: string, dispatch: (action: Request<TDa
             dispatch(requestError(message));
         }
     }
+}
+
+export function get<TData>(apiPath: string, dispatch: (action: Request<TData>) => void) {
+    return performGet<TData, TData>(apiPath, t => t, dispatch);
+}
+
+export function getWithDates<TData>(
+    apiPath: string,
+    convert: (json: DatesAsStrings<TData>) => TData,
+    dispatch: (action: Request<TData>) => void
+) {
+    return performGet<TData, DatesAsStrings<TData>>(apiPath, convert, dispatch);
 }
 
 export async function post(apiPath: string, data: any, dispatch: (action: Request<void>) => void): Promise<boolean> {

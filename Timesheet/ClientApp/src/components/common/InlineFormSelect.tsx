@@ -10,25 +10,36 @@ interface Props<T extends Option> {
     id: string;
     label: string;
     valueId?: string;
-    onChange: (newValue: T) => void;
+    onChange: (newValue: T | undefined) => void;
     disabled: boolean;
     options: T[] | undefined;
+    isNoSelectionAllowed? : boolean;
 }
 
 export function InlineFormSelect<T extends Option>(props: Props<T>): JSX.Element {
 
-    if (props.options && props.options.length > 0 && !props.valueId) {
-        props.onChange(props.options[0]);
+    const [initialized, setInitialized] = React.useState(false)
+
+    if (props.options && !initialized) {
+        if(props.options.length > 0 && !props.isNoSelectionAllowed) {
+            props.onChange(props.options[0]);
+        }
+        setInitialized(true);
     }
 
     const options = props.options?.map(o => <option key={o.id} value={o.id}>{o.name}</option>)
+    if (props.isNoSelectionAllowed) {
+        options?.unshift(<option key={null} value=""></option>)
+    }
 
     const change = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        if (!props.options || props.options.length < 1) {
+        if (!props.options || (props.options.length < 1 && !props.isNoSelectionAllowed)) {
             return;
         }
-        const newValue = props.options.filter(o => o.id === event.currentTarget.value)[0];
-        props.onChange(newValue);
+        const newValue = props.options.find(o => o.id === event.currentTarget.value);
+        if (newValue || props.isNoSelectionAllowed) {
+            props.onChange(newValue);
+        };
     };
 
     return (

@@ -3,4 +3,5 @@ export interface MenuItem {
     path : string;
     component : () => JSX.Element;
     exact? : boolean;
+    excludeFromMenu? : boolean;
 }

@@ -1,16 +1,28 @@
+import { DatesAsStrings } from "../utilities/Dates";
 import { Stringified } from "../utilities/Strings";
-import { stringify as stringifyProject, Project } from "./Project";
+import { stringifyProject, convertProjectFromJson, Project } from "./Project";
+import { convertWorkLogFromJson, stringifyWorkLog, WorkLog } from "./WorkLogs";
 
 export type Task = {
     id: number;
     name: string;
-    project: Project;
+    project?: Project;
+    workLogs? : WorkLog[];
 };
 
-export function stringify(task : Task) : Stringified<Task> {
+export function stringifyTask(task : Task) : Stringified<Task> {
     return {
         ...task,
         id : task.id.toString(),
-        project : stringifyProject(task.project)
+        project : task.project ? stringifyProject(task.project) : undefined,
+        workLogs: task.workLogs?.map(stringifyWorkLog)
     }
+}
+
+export function convertTaskFromJson(json: DatesAsStrings<Task>): Task {
+    return {
+        ...json,
+        project: json.project ? convertProjectFromJson(json.project) : undefined,
+        workLogs: json.workLogs?.map(convertWorkLogFromJson)
+    };
 }

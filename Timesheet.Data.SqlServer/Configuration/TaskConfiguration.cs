@@ -14,17 +14,11 @@ namespace Timesheet.Data.SqlServer.Configuration
 
             builder.Property(t => t.TaskStateId).HasConversion<int>();
 
-            builder.HasMany(t => t.WorkLogs)
-                .WithOne(wl => wl.Task)
-                .HasForeignKey(wl => wl.TaskId)
-                .IsRequired()
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.HasData(new Task
+            builder.HasData(new
             {
-                Id = -1,
+                Id = -1L,
                 Name = "Example Task",
-                ProjectId = -1,
+                ProjectId = -1L,
                 TaskStateId = TaskStateId.Open
             });
         }

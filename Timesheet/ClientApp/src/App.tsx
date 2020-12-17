@@ -5,12 +5,16 @@ import { Dashboard } from './components/dashboard/Dashboard';
 import { Users } from './components/users/Users';
 import { Tasks } from './components/tasks/Tasks';
 import { MenuItem } from './models/menuItem';
+import { Projects } from './components/projects/Projects';
+import { ProjectDetailsPage } from './components/projects/ProjectDetailsPage';
 
 import './custom.css'
 
 const menuItems: MenuItem[] = [
   { label: "Dashboard", path: "/", component: Dashboard, exact: true },
   { label: "Users", path: "/users", component: Users },
+  { label: "Project", path: "/projects/:id", component: ProjectDetailsPage, excludeFromMenu : true },
+  { label: "Projects", path: "/projects", component: Projects },
   { label: "Tasks", path: "/tasks", component: Tasks }
 ];
 

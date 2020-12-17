@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Button, Form } from "reactstrap";
 import { InlineAddFormProps } from "../../models/InlineFormProps";
-import { Project, stringify } from "../../models/Project";
+import { Project, stringifyProject } from "../../models/Project";
 import { Task } from "../../models/Task";
 import { Stringified } from "../../utilities/Strings";
 import { InlineFormInput } from "../common/InlineFormInput";
@@ -16,7 +16,7 @@ export function AddTaskInlineForm(props: Props): JSX.Element {
     const isFormEnabled = () => !props.disabled && props.projects && props.projects.length > 0;
 
     const nameChange = (value: string) => props.setDataItem({ ...props.dataItem, name: value });
-    const projectChange = (project: Stringified<Project>) => props.setDataItem({ ...props.dataItem, project: project });
+    const projectChange = (project?: Stringified<Project>) => props.setDataItem({ ...props.dataItem, project: project });
 
     return (
         <Form inline>
@@ -25,7 +25,7 @@ export function AddTaskInlineForm(props: Props): JSX.Element {
                 onChange={nameChange} disabled={!isFormEnabled()} />
             <InlineFormSelect
                 id="projectId" label="Project" valueId={props.dataItem.project?.id}
-                onChange={projectChange} disabled={!isFormEnabled()} options={props.projects ? props.projects.map(stringify) : undefined} />
+                onChange={projectChange} disabled={!isFormEnabled()} options={props.projects?.map(stringifyProject)} />
             <Button size="sm" disabled={!isFormEnabled()} onClick={props.post}>Add</Button>
         </Form>
     );

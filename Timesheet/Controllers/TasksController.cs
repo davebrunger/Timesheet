@@ -45,7 +45,6 @@ namespace Timesheet.Controllers
             return Ok(data);
         }
 
-        
         [HttpPost]
         public async Task<ActionResult> CreateAsync(CreateUpdateTaskRequest request, CancellationToken cancellationToken)
         {

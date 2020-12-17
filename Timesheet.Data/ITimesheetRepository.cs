@@ -11,5 +11,7 @@ namespace Timesheet.Data
         ITable<Task> Tasks {get;}
         
         ITable<WorkLog> WorkLogs {get;}
+
+        ITable<Activity> Activities {get;}
     }
 }

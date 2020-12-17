@@ -6,7 +6,7 @@ export type User = {
     location?: string;
 };
 
-export function stringify(user: User): Stringified<User> {
+export function stringifyUser(user: User): Stringified<User> {
     return {
         ...user,
         id: user.id.toString()

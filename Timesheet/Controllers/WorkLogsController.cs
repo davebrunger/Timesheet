@@ -49,7 +49,8 @@ namespace Timesheet.Controllers
                             wl.Task.Project.Id,
                             wl.Task.Project.Name
                         }
-                    }
+                    },
+                    ActivityId = wl.ActivityId
                 })
                 .ToListAsync(cancellationToken)
                 .ConfigureAwait(false);
@@ -99,7 +100,8 @@ namespace Timesheet.Controllers
                 Date = request.Date!.Value,
                 Hours = request.Hours!.Value,
                 Task = task!,
-                User = user!
+                User = user!,
+                ActivityId = request.ActivityId
             });
 
             await timesheetRepository.SaveChangesAsync(cancellationToken)

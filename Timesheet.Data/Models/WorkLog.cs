@@ -10,12 +10,12 @@ namespace Timesheet.Data.Models
 
         public decimal Hours { get; set; }
 
-        public long UserId { get; set; }
-
         public User User { get; set; } = null!;
 
-        public long TaskId { get; set; }
-
         public Task Task { get; set; } = null!;
+
+        public ActivityId? ActivityId { get; set; }
+
+        public Activity? Activity { get; set; }
     }
 }

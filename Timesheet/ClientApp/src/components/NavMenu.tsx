@@ -10,13 +10,15 @@ export function NavMenu(): JSX.Element {
 
   const menuItems = React.useContext(AppContext).menuItems;
 
-  const menuItemNavs = menuItems.map((m, i) => {
-    return (
-      <NavItem key={i}>
-        <NavLink className="nav-link" to={m.path} activeClassName="bg-secondary text-white" exact={m.exact}>{m.label}</NavLink>
-      </NavItem>
-    );
-  });
+  const menuItemNavs = menuItems
+    .filter(m => !m.excludeFromMenu)
+    .map((m, i) => {
+      return (
+        <NavItem key={i}>
+          <NavLink className="nav-link" to={m.path} activeClassName="bg-secondary text-white" exact={m.exact}>{m.label}</NavLink>
+        </NavItem>
+      );
+    });
 
   return (
     <header>

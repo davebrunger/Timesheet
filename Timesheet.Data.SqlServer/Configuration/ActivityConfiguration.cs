@@ -6,17 +6,17 @@ using Timesheet.Data.Models;
 
 namespace Timesheet.Data.SqlServer.Configuration
 {
-    public class TaskStateConfiguration : IEntityTypeConfiguration<TaskState>
+    public class ActivityConfiguration : IEntityTypeConfiguration<Activity>
     {
-        public void Configure(EntityTypeBuilder<TaskState> builder)
+        public void Configure(EntityTypeBuilder<Activity> builder)
         {
             builder.Property(t => t.Id).HasConversion<int>();
-            builder.Property(t => t.Name).HasMaxLength(TaskState.NameMaxLength);
+            builder.Property(p => p.Name).HasMaxLength(Activity.NameMaxLength);
 
             builder.HasData(
-                Enum.GetValues(typeof(TaskStateId))
-                    .Cast<TaskStateId>()
-                    .Select(s => new TaskState()
+                Enum.GetValues(typeof(ActivityId))
+                    .Cast<ActivityId>()
+                    .Select(s => new Activity()
                     {
                         Id = s,
                         Name = s.ToString()

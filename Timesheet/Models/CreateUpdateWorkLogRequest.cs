@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
+using System.Linq;
+using Timesheet.Data.Models;
 
 namespace Timesheet.Models
 {
@@ -20,6 +22,8 @@ namespace Timesheet.Models
         [Required]
         public EntityId Task { get; set; } = null!;
 
+        public ActivityId? ActivityId {get; set;}
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (Hours.HasValue)
@@ -36,6 +40,12 @@ namespace Timesheet.Models
             {
                 yield return new ValidationResult("Date must not have a time component", new[] { nameof(Date) });
             }
+
+            if (ActivityId.HasValue && !Enum.IsDefined<ActivityId>(ActivityId.Value))
+            {
+                yield return new ValidationResult("ActivityId is not valid", new[] { nameof(ActivityId) });
+            }
         }
+
     }
 }

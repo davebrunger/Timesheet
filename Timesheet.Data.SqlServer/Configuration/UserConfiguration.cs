@@ -13,18 +13,11 @@ namespace Timesheet.Data.SqlServer.Configuration
             builder.Property(u => u.Name).HasMaxLength(User.NameMaxLength);
             builder.Property(u => u.Location).HasMaxLength(User.LocationMaxLength);
 
-            builder.HasMany(u => u.WorkLogs)
-                .WithOne(wl => wl.User)
-                .HasForeignKey(wl => wl.UserId)
-                .IsRequired()
-                .OnDelete(DeleteBehavior.Restrict);
-
             builder.HasData(new User
             {
                 Id = -1,
                 Name = "Example User"
             });
-
         }
     }
 }

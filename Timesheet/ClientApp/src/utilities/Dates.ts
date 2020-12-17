@@ -11,7 +11,11 @@ export function parseDate(dateStr : string | undefined) : Date | undefined
 export type DatesAsStrings<T> = {
   [K in keyof T]: T[K] extends Date 
       ? string 
-      : (T[K] extends object 
-          ? DatesAsStrings<T[K]> 
-          : T[K])
+      : (T[K] extends Date | undefined 
+          ? string | undefined 
+          : (T[K] extends object 
+            ? DatesAsStrings<T[K]> 
+            : (T[K] extends object | undefined
+              ? DatesAsStrings<T[K]> | undefined
+              : T[K])))
 };

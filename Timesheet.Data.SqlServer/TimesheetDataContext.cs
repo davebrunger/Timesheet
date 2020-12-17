@@ -17,6 +17,8 @@ namespace Timesheet.Data.SqlServer
 
         public DbSet<TaskState> TaskStates { get; set; } = null!;
 
+        public DbSet<Activity> Activities { get; set; } = null!;
+
         public TimesheetDataContext(DbContextOptions<TimesheetDataContext> options) : base(options)
         {
         }

@@ -11,11 +11,7 @@ namespace Timesheet.Data.SqlServer.Configuration
             builder.HasIndex(u => u.Name).IsUnique();
 
             builder.Property(p => p.Name).HasMaxLength(Project.NameMaxLength);
-
-            builder.HasMany(p => p.Tasks)
-                .WithOne(wl => wl.Project)
-                .IsRequired()
-                .OnDelete(DeleteBehavior.Restrict);
+            builder.Property(wl => wl.DueDate).HasColumnType("DATE");
 
             builder.HasData(new Project
             {

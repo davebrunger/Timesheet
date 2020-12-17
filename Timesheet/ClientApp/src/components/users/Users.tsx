@@ -23,7 +23,7 @@ export function Users(): JSX.Element {
         }
     }
 
-    React.useEffect(() => { getData(); }, [getData]);
+    React.useEffect(getData, [getData]);
 
     return (
         <>
