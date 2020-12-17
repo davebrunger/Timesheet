@@ -38,7 +38,10 @@ export function ProjectDetails(props: Props): JSX.Element {
             </Form>
             <Row>
                 <Col>
-                    <Async request={props.activitiesRequest} success={activities => <ProjectActivities workLogs={workLogs} activities={activities} />} />
+                    <Async
+                        request={props.activitiesRequest}
+                        success={activities => <ProjectActivities workLogs={workLogs} activities={activities} />}
+                    />
                 </Col>
                 <Col>
                     <ProjectTasks workLogs={workLogs} />
